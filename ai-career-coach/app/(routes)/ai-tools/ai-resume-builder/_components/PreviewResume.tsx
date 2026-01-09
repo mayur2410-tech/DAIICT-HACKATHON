@@ -182,7 +182,37 @@ export default function PreviewResume({
             </div>
           </div>
         )}
+         {/* CERTIFICATIONS */}
+        {certifications.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold border-b border-gray-300 pb-1 mb-2">
+              Certifications
+            </h2>
+            <ul className="list-disc list-inside text-sm text-gray-700">
+              {certifications.map((cert, i) => <li key={i}>{cert}</li>)}
+            </ul>
+          </div>
+        )}
 
+        {/* ACHIEVEMENTS */}
+        {achievements.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold border-b border-gray-300 pb-1 mb-2">
+              Achievements
+            </h2>
+            <ul className="list-disc list-inside text-sm text-gray-700">
+              {achievements.map((ach, i) => <li key={i}>{ach}</li>)}
+            </ul>
+          </div>
+        )}
+
+        {/* ACTION BUTTONS */}
+        <div className="flex gap-4 mt-6 justify-center">
+          <Button className="px-6 text-base">Download as PDF</Button>
+          <Button variant="outline" className="px-6 text-base">
+            Copy to Clipboard
+          </Button>
+        </div>
       </div>
     </div>
   );
