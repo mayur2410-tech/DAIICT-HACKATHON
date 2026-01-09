@@ -10,3 +10,22 @@ export async function GET() {
       .select()
       .from(coverLetterTable)
       .orderBy(desc(coverLetterTable.createdAt));
+    // Keep only the latest cover letter per user
+    const latestPerUser = latestResumes.reduce<
+      Record<number, typeof latestResumes[0]>
+    >((acc, row) => {
+      if (!acc[row.userId]) {
+        acc[row.userId] = row;
+      }
+      return acc;
+    }, {});
+
+    return NextResponse.json(Object.values(latestPerUser));
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to fetch data" },
+      { status: 500 }
+    );
+  }
+}
