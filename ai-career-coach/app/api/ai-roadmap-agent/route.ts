@@ -27,3 +27,20 @@ export async function POST(req:NextRequest) {
             }
     });
     
+        const runId = resultId?.ids[0];
+    let runStatus;
+    while(true){
+        runStatus = await getRuns(runId);
+        if(runStatus?.data?.[0]?.status === "Completed") {
+            break;
+        }
+        if(runStatus?.data?.[0]?.status === "Cancelled"){
+            break;
+        }
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+    }
+    return NextResponse.json({ output: runStatus.data?.[0].output?.output[0] });
+    
+}
