@@ -1,6 +1,71 @@
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  serial,
+  varchar,
+  integer,
+  text,
+  json,
+  timestamp,
+} from "drizzle-orm/pg-core";
+
+
 export const usersTable = pgTable("users", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: varchar({ length: 255 }).notNull(),
     email: varchar({ length: 255 }).notNull().unique(),
+});
+
+
+export const resumeAnalysisTable = pgTable("resume_analysis", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+
+  userId: integer()
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+
+  email: varchar({ length: 255 }).notNull(),
+
+  analysisData: json(),
+  resumeURL: varchar({ length: 255 }),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+
+
+
+export const roadMapGeneratorTable = pgTable("road_map_generator", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+
+    userId: integer()
+        .notNull()
+        .references(() => usersTable.id, { onDelete: "cascade" }),
+
+    email: varchar({ length: 255 }).notNull(),
+
+    roadMapData: json(),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
+});
+
+
+
+export const coverLetterTable = pgTable("coverletter-text", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+
+    userId: integer()
+        .notNull()
+        .references(() => usersTable.id, { onDelete: "cascade" }),
+
+    email: varchar({ length: 255 }).notNull(),
+
+    coverLetter_Text: text().notNull(),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+        .defaultNow()
+        .notNull(),
 });
