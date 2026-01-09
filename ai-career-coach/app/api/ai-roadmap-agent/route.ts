@@ -17,8 +17,13 @@ export async function POST(req:NextRequest) {
         const dbUser = await db.select().from(usersTable).where(eq(usersTable.email, email));
         const userId = dbUser[0].id;
     
-        
+
     const resultId = await inngest.send({
-      
+                name:"AiRoadMapAgent",
+            data:{
+                userInput:userInput,
+                userEmail:email,
+                userId:userId
+            }
     });
     
