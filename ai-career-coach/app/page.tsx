@@ -4,6 +4,8 @@ import Image from 'next/image'
 import { SignInButton, UserButton, useUser  } from '@clerk/nextjs'
 
 export default function Home() {
+    const { user } = useUser();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
     <nav className="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg z-50 border-b border-gray-200 dark:border-gray-800">
