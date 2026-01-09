@@ -1,6 +1,8 @@
 import { db } from "@/configs/db";
 import { inngest } from "./client";
 import { createAgent, anthropic, gemini } from '@inngest/agent-kit';
+import ImageKit from "imagekit";
+import { resumeAnalysisTable, roadMapGeneratorTable,coverLetterTable } from "@/configs/schema";
 
 
 export const helloWorld = inngest.createFunction(
@@ -256,3 +258,71 @@ export const  AiResumeAgent = inngest.createFunction(
 
    }
 )
+
+
+export const AIRoadmapAgent = inngest.createFunction(
+  {id:"AiRoadMapAgent"},
+  {event:"AiRoadMapAgent"},
+  async({event,step})=>{
+    const {userInput,userEmail,userId}= await event.data;
+const roadMapResult = await AIRoadMapGenerartorAgent.run(
+  `Generate a roadmap for the following position/skills: ${userInput}. 
+   Use JSON format exactly as specified in the system prompt and YouTube links only.`
+);
+    
+     //@ts-ignore
+      const rawContent = roadMapResult.output[0].content;
+      const rawContentJson  = rawContent.replace('```json', '').replace('```', '')
+      const parseJSON = JSON.parse(rawContentJson)
+        const saveToDB = await step.run("saveToDB", async()=>{
+           const result = await db.insert(roadMapGeneratorTable).values({
+            userId: userId,
+            email: userEmail,
+            roadMapData: parseJSON,
+          
+
+           })
+
+          //  console.log("result:",result)
+           return parseJSON;
+      })
+
+
+
+    //save to db
+
+  }
+)
+
+export const AICoverLetterAgent = inngest.createFunction(
+  { id: "AICoverLetterAgent" },
+  { event: "AICoverLetterAgent" },
+  async ({ event, step }) => {
+    const { jobTitle, companyName, jobDescription, resumeRawText ,userEmail,userId} = event.data;
+
+    const coverLetterResult = await AICoverLetterGeneratorAgent.run(`
+      Resume Text: ${resumeRawText}
+      Job Title: ${jobTitle}
+      Company Name: ${companyName}
+      Job Description: ${jobDescription}
+    `);
+
+    //@ts-ignore
+    const rawContent = coverLetterResult.output[0].content;
+    const cleanText = rawContent.replace(/```/g, '').replace(/json/g, '').trim();
+
+    // Save to DB
+     const saveToDB = await step.run("saveToDB", async()=>{
+           const result = await db.insert(coverLetterTable).values({
+            userId: userId,
+            email: userEmail,
+            coverLetter_Text: cleanText,
+          
+
+           })
+
+          //  console.log("result:",result)
+           return cleanText;
+      })
+  }
+);
